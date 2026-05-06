@@ -1,6 +1,6 @@
 from ADAPTER.CLIENT.data_request import Url_requests
 import pandas as pd
-print(Url_requests().products())
+
 
 class Cleaned:
     
@@ -41,9 +41,9 @@ class Cleaned:
     
     @staticmethod
     def clean_null_columns(df:pd.DataFrame) -> pd.DataFrame: #REMOVE AS COLUNAS QUE NO QUAL OS DADOS SÃO MAIS DE 30% VAZIOS
-        columns = [c for c in list(df.columns) if (df[c].isna().mean() *100) > 30]
+        df = df.drop_duplicates()
+        columns = [c for c in list(df.columns) if (df[c].isna().mean()*100) > 30]
         df = df.drop(columns=columns)
-        
         return df
     
     @staticmethod
@@ -60,7 +60,8 @@ class Cleaned:
     @staticmethod
     def normalize(df:pd.DataFrame) -> pd.DataFrame:
         for c in list(df.columns):
-            df[c] = df[c].str.lower().str.capitalize()
+            if isinstance(df[c].iloc[0], str):
+                df[c] = df[c].str.lower().str.capitalize()
             
         return df
     

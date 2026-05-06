@@ -40,7 +40,16 @@ class Control:
 
         return True
             
-    def read(self) ->pd.DataFrame:
+    def read(self, get_status=None) ->pd.DataFrame:
+        data = {
+            "processed": Control_DataSql().read_sql,
+            "cleaned": Control_DataParquet().read_parquet,
+            "raw": Control_DataJson().read_json
+        }
+        if get_status is not None:
+            if get_status in data.keys():
+                return {"status":get_status, "data":data[get_status](name=self.name)}
+            raise KeyError(f"not key {get_status}")
         up = self.update()
 
         if up:
@@ -49,11 +58,7 @@ class Control:
             "data": Url_requests().request(name=self.name)
         }
 
-        data = {
-            "processed": Control_DataSql().read_sql,
-            "cleaned": Control_DataParquet().read_parquet,
-            "raw": Control_DataJson().read_json
-        }
+        
 
         for c in data.keys():
 
@@ -97,10 +102,16 @@ class Control:
 
             self.limit(status=status)
 
-        data_save[status](
+        save = data_save[status](
             name=self.name,
             df=df,
             version=version
+            
+        ) if status !="processed" else data_save[status](
+            name=self.name,
+            df=df,
+            
+            
         )
 
         return version
