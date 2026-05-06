@@ -1,29 +1,30 @@
-import os
 from pathlib import Path
-from DOMAIN.VALID.valid_func import Valid_func
+import shutil
 
 
-class LimitService: #essa classe serve pra definir o limite de arquivos por camada, ai quando chegar, apaga o mais antigo
-
+class LimitService:
     def __init__(self, path: str, limit: int):
         self.path = Path(path)
         self.limit = limit
-        self.valid = Valid_func()
 
-    def get_files(self):
+    def get_versions(self):
         if not self.path.exists():
             return []
-        return [f for f in self.path.iterdir() if f.is_file()]
+
+        return [v for v in self.path.iterdir() if v.is_dir()]
 
     def execute(self) -> None:
-        files = self.get_files()
-        if files:
+        if self.limit <= 0:
+            return
 
-            if not self.valid.limit(lenght=files, limit=self.limit):
-                return
+        versions = self.get_versions()
 
-            files_sorted = sorted(files, key=lambda f: f.stat().st_mtime)
+        if len(versions) <= self.limit:
+            return
 
-            file_to_delete = files_sorted[0]
+        versions_sorted = sorted(versions, key=lambda v: v.name)
 
-            file_to_delete.unlink()
+        excess = len(versions_sorted) - self.limit
+
+        for version in versions_sorted[:excess]:
+            shutil.rmtree(version)
