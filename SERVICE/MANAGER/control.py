@@ -10,7 +10,7 @@ from SERVICE.ROLE.version import VersionService
 import os
 import pandas as pd
 
-class Control:
+class Control: #CONTROLA OS ARQUIVOS, QUANDO VAI ATUALIZAR, O LIMITE E AS CAMADAS
     def __init__(self, name:str, update: int, limit: int) -> None:
         self.name = name
         self.up = update

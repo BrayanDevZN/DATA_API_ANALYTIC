@@ -58,7 +58,8 @@ class Cleaned:
         return df
     
     @staticmethod
-    def normalize(df:pd.DataFrame) -> pd.DataFrame:
+    def normalize(df:pd.DataFrame) -> pd.DataFrame:#NORMALIZA OS DADOS DAS COLUNAS QUE SÃO STR
+        
         for c in list(df.columns):
             if isinstance(df[c].iloc[0], str):
                 df[c] = df[c].str.lower().str.capitalize()

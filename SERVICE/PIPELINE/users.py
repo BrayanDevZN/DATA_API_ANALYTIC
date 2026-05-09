@@ -43,10 +43,15 @@ class Data_Users:
             max_job = ("job", lambda x: x.mode().iloc[0]),
             max_gender= ("gender", lambda x: x.mode().iloc[0])
         ).reset_index().sort_values(by="quantity_clients", ascending=False)
+        self.con.save(status="processed", df=data)
         return data
     
     def search(self, status:str) -> pd.DataFrame:
-        return self.con.read(get_status=status)
+        data = self.con.read(get_status=status)
+        if data is None:
+            self.execute()
+            
+        return data
     
     def execute(self) -> pd.DataFrame:
         

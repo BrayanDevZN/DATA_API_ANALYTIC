@@ -34,14 +34,18 @@ class Data_Product:
         avg_rating=("rating", "mean"),
         total_stock=("stock", "sum"),
         avg_discount=("discountPercentage", "mean")
-    ).reset_index().round(2)
+    ).reset_index().round(2).sort_values(by="avg_price", ascending=False)
         
         self.con.save(df=result, status="processed")
 
         return result
     
     def search(self, status:str) -> pd.DataFrame:
-        return self.con.read(get_status=status)
+        data = self.con.read(get_status=status)
+        if data is None:
+            self.execute()
+            
+        return data
     
     def execute(self) -> pd.DataFrame:
         
