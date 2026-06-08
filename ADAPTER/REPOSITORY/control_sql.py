@@ -1,7 +1,7 @@
 import pandas as pd
 import logging
 logger = logging.getLogger(__name__)
-from INFRA.CONNECT.main_connect import Engine_database
+from INFRA.CONNECT.DATABASE.main_connect import Engine_database
 
 class Control_DataSql: #converte sql pra dataframe e salva dataframe em sql
     def __init__(self)-> None:

@@ -1,5 +1,4 @@
-from DOMAIN.VALID.rule_file import Valid_arq
-from DOMAIN.TRANSFORM.clean import Cleaned
+
 from ADAPTER.CLIENT.data_request import Url_requests
 from ADAPTER.REPOSITORY.control_json import Control_DataJson
 from ADAPTER.REPOSITORY.control_parquet import Control_DataParquet
@@ -9,6 +8,7 @@ from SERVICE.ROLE.update import UpdateService
 from SERVICE.ROLE.version import VersionService
 import os
 import pandas as pd
+from SERVICE.MANAGER.tasks import save
 
 class Control: #CONTROLA OS ARQUIVOS, QUANDO VAI ATUALIZAR, O LIMITE E AS CAMADAS
     def __init__(self, name:str, update: int, limit: int) -> None:
@@ -81,41 +81,13 @@ class Control: #CONTROLA OS ARQUIVOS, QUANDO VAI ATUALIZAR, O LIMITE E AS CAMADA
             
     def save(self, df:pd.DataFrame, status:str) -> None:
         
-        
-        data_save = {
-            "raw": Control_DataJson().save_json,
-            "cleaned": Control_DataParquet().save_parquet,
-            "processed": Control_DataSql().save_sql
-        }
-
-        if status not in data_save.keys():
-            raise KeyError(f"not key {status}")
-
-        version = VersionService.create()
-
+        Data = save(name=self.name, df=df, status=status)
         if status != "processed":
-
-            os.makedirs(
-                name=f"ADAPTER/STORAGE/{status.upper()}/{self.name}/{version}",
-                exist_ok=True
-            )
-
             self.limit(status=status)
+            
+        return Data
 
-        save = data_save[status](
-            name=self.name,
-            df=df,
-            version=version
-            
-        ) if status !="processed" else data_save[status](
-            name=self.name,
-            df=df,
-            
-            
-        )
-
-        return version
-            
+        
         
        
         

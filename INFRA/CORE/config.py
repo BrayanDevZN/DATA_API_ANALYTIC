@@ -30,6 +30,14 @@ class Settings_database: #retorna os dados do banco
     
     def password(self) -> str:
         return os.getenv("DB_PASSWORD")  
+    
+    
+class Settings_Redis:
+    def backend(self) -> str:
+        return os.getenv("BACKEND")
+    
+    def broker(self) -> str:
+        return os.getenv("BROKER")
                                                    
     
     
