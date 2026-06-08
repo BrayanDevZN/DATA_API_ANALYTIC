@@ -1,7 +1,8 @@
 from DOMAIN.VALID.valid_func import Valid_func
 import os
 from datetime import datetime
-from SERVICE.ROLE.version import VersionService
+import logging
+logger = logging.getLogger(__name__)
 class UpdateService:
     def __init__(self, limit: int, name: str) -> None:
         self.valid = Valid_func()
@@ -11,10 +12,17 @@ class UpdateService:
 
     def last(self) -> datetime:
         timestamp = os.path.getmtime(self.name)
+        logger.info(f"Conferindo as ultimas datas de {self.name}...")
+        
         return datetime.fromtimestamp(timestamp)
 
     def execute(self) -> bool:
-        return self.valid.update(
+        limit =  self.valid.update(
             last_date=self.last_date,
             days=self.limit
         )
+        if limit:
+            logger.info(f"Dia de atualização, {self.name} vai ser atualizado!!")
+            
+        logger.info(f"{self.name} ainda não vai ser atualizado!!")
+        return limit

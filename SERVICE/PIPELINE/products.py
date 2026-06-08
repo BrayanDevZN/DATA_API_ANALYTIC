@@ -43,7 +43,7 @@ class Data_Product:
     def search(self, status:str) -> pd.DataFrame:
         data = self.con.read(get_status=status)
         if data is None:
-            self.execute()
+            data = self.execute()
             
         return data
     
