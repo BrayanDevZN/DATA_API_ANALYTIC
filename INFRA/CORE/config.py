@@ -38,6 +38,8 @@ class Settings_Redis:
     
     def broker(self) -> str:
         return os.getenv("BROKER")
+    
+
                                                    
     
     

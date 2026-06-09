@@ -20,20 +20,23 @@ class Control_DataParquet: #le e salva arquivos parquet
         logger.info("Dados salvos!!")
             
     @staticmethod
-    def read_parquet(name:str) -> pd.DataFrame|None:
-        logger.info(f"Lendo arquivo {name} na camada raw...")
+    def read_parquet(name: str) -> pd.DataFrame | None:
+        logger.info(f"Lendo arquivo {name} na camada cleaned...")
+
         version_path = VersionService.last(
-        status="cleaned",
-        name=name
+            status="cleaned",
+            name=name
         )
+
+        if version_path is None:
+            logger.warning(f"Nenhuma versão encontrada para {name} na camada cleaned.")
+            return None
 
         file = version_path / f"{name}.parquet"
 
-        if version_path is None or not file.exists():
+        if not file.exists():
             logger.warning(f"Arquivo {name} não existe na camada cleaned.")
             return None
-
-        
 
         logger.info(f"Arquivo {name} lido com sucesso!!!")
 

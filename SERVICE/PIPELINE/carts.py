@@ -17,10 +17,10 @@ class Data_Carts:
         return data
     
     def silver(self, data:pd.DataFrame) ->pd.DataFrame:
-        users = Data_Users().search(status="cleaned")["data"][["id", "name", "age", "gender", 'country', 'state', 'city']]
+        users = Data_Users().search(status="cleaned")[["id", "name", "age", "gender", 'country', 'state', 'city']]
         
         
-        products = Data_Product().search(status="cleaned")["data"][["id", "title", "category"]]
+        products = Data_Product().search(status="cleaned")[["id", "title", "category"]]
        
         data = self.Cleaned.clean_dict(df=data).rename(columns={
             "id": "cart_id"
@@ -87,11 +87,16 @@ class Data_Carts:
         return data
     
     def search(self, status:str) -> pd.DataFrame:
-        data = self.con.read(get_status=status)
-        if data is None:
-            self.execute()
-            
-        return data
+          data = self.con.read(get_status=status)
+
+          if data is None:
+                df = self.execute()
+                return {
+                    "status": "processed",
+                    "data": df
+                }
+
+          return data
                     
     
     def execute(self) -> pd.DataFrame:

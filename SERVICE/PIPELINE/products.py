@@ -40,13 +40,18 @@ class Data_Product:
 
         return result
     
-    def search(self, status:str) -> pd.DataFrame:
-        data = self.con.read(get_status=status)
-        if data is None:
-            data = self.execute()
-            
-        return data
-    
+    def search(self, status: str) -> dict:
+          
+
+          while True:
+              data = self.con.read(get_status=status)["data"]
+              if data is not None:
+                  break
+              
+              self.execute()
+              
+          return data
+              
     def execute(self) -> pd.DataFrame:
         
         if self.data["status"] == "processed":
